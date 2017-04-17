@@ -1,0 +1,134 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<stdbool.h>
+enum slotname {ground, hill, city};
+typePlaydef struct slots
+{
+ int row;
+ int column;
+ char slottypePlay[50];
+ struct slots *left;
+ struct slots *right;
+ struct slots *up;
+ struct slots *down;
+ int slottypePlay;
+ }slots;
+
+ typePlaydef struct slots1
+ {
+ char first_name[20];
+ char typePlayPlay[10];
+ int life_points;
+  int smarts;
+  int strength;
+  int magic_skills;
+  int luck;
+  int dexterity;
+  int status;
+  struct slots *playerposition;
+  }slots1;
+
+  void createBoard( struct slots **upLeft, struct slots **upRight, struct slots **downLeft, struct slots **downRight);//creates the 7*7 board using the linked list
+
+  struct slots1 * assignplayer(int input, struct slots1 *players);//function to assign the names, typePlay, and all the capabilities to each player
+
+  struct slots1 * move(struct slots1 *players2); //function to enable the player to move up,right,left, or down.
+
+  int main()
+  {
+	int srand(time(Null));
+  	struct slots1 *player3;
+  	struct slots *upLeft;
+  	struct slots *upRight;
+  	struct slots *downLeft;
+  	struct slots *downRight;
+  	createBoard(&upLeft, &upRight, &downLeft, &downRight);
+  	printf("Please enter the number of Players Playing:\n");
+  	int numPlay=0;
+  	scanf("%d",&numPlay);
+  	while (numPlay<2||numPlay>6)
+  	{
+     		printf("Input is invaid, please input  number of players 2 6\n");
+     		scanf ("%d", &numPlay);
+      }
+  	struct slots1 *players = assignplayer(numPlay, &player3);
+  	for(int i=0;i<numPlay;i++)
+  	{
+  		players[i].status=1;
+  	}
+
+  	int opt=0; int counter=0;
+  	do
+  	{
+  		counter=0;
+  		for(int j=0;j<numPlay;j++)
+  		{
+  			if(players[j].status==1)
+  			{
+  				counter++  ;
+  			}
+  		}
+  		for(int i=0;i<numPlay;i++)
+  		{
+  			if(players[i].status==1)
+  			{
+  				printf("Player %d Enter 1 to move or 2 to attack, 0 to exit:\n",i+1);
+  				scanf("%d",&opt);
+  				if(opt==1)
+  				{
+  					move(&players[i]);
+  				}
+  				if(opt==0)
+  				{
+  					players[i].status=0;
+  				}
+  			}
+  		}
+  	} while(counter>1);
+
+
+  	return 0;
+  }
+  void createBoard( struct slots **upLeft, struct slots **upRight, struct slots **downLeft, struct slots **downRight)
+  {
+
+
+  	struct slots **board = malloc(7 * sizeof(struct slots));
+
+
+  	for(int i=0;i<7;i++)
+  	{
+  		board[i]=malloc(7*sizeof(struct slots));
+  		for(int j=0;j<7;j++)
+  		{
+  			board[i][j].row =i;
+  			board[i][j].column =j;
+  			int v=rand()%3;
+  			board[i][j].slottypePlay=v;
+  		}
+  	}
+  	for(int i=1;i<6;i++)
+  	{
+  		for(int j=1;j<6;j++)
+  		{
+  			board[i][j].up = &board[i-1][j];
+  			board[i][j].right = &board[i][j-1];
+  			board[i][j].down = &board[i-1][j];
+  			board[i][j].left = &board[i][j-1];
+  		}
+  	}
+  	for(int j=1;j<6;j++)
+  	{
+  		board[0][j].right = &board[0][j+1];
+  		board[0][j].left = &board[0][j+1];
+  		board[0][j].down = &board[1][j];
+  		board[0][j].up = NULL;
+
+  		//It sets up the adjacent slots for the slots that are in the last row.
+  		//These slots don't have an adjacent element on down them
+  		// because they are on the last row of the board
+  		board[6][j].right = &board[6][j+1];
+  		board[6][j].left = &board[6][j+1];
+  		board[6][j].up = &board[5][j];
+  		board[6][j].down = NULL;
+  	}
